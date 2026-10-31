@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.cotidiano.ui.home.HomeFragment"
+        android:label="Hoje" />
+    <fragment
+        android:id="@+id/goalsFragment"
+        android:name="com.example.cotidiano.ui.goals.GoalsFragment"
+        android:label="Metas" />
+    <fragment
+        android:id="@+id/choresFragment"
+        android:name="com.example.cotidiano.ui.chores.ChoresFragment"
+        android:label="Obrigações" />
+    <fragment
+        android:id="@+id/pomodoroFragment"
+        android:name="com.example.cotidiano.ui.pomodoro.PomodoroFragment"
+        android:label="Pomodoro" />
+    <fragment
+        android:id="@+id/scheduleFragment"
+        android:name="com.example.cotidiano.ui.schedule.ScheduleFragment"
+        android:label="Cronograma" />
+</navigation>

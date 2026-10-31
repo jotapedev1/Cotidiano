@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/homeFragment"
+        android:icon="@android:drawable/ic_menu_today"
+        android:title="Hoje" />
+    <item android:id="@+id/goalsFragment"
+        android:icon="@android:drawable/ic_menu_agenda"
+        android:title="Metas" />
+    <item android:id="@+id/choresFragment"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:title="Obrigações" />
+    <item android:id="@+id/pomodoroFragment"
+        android:icon="@android:drawable/ic_menu_recent_history"
+        android:title="Pomodoro" />
+    <item android:id="@+id/scheduleFragment"
+        android:icon="@android:drawable/ic_menu_my_calendar"
+        android:title="Cronograma" />
+</menu>
