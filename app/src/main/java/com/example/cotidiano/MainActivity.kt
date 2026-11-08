@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val navHostFragment = supportFragmentManager
-            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+            .findFragmentById(R.id.nav_host) as NavHostFragment
         val navController = navHostFragment.navController
 
         binding.bottomNav.setupWithNavController(navController)
@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         // Esconde a bottom bar nas telas de login/cadastro
         navController.addOnDestinationChangedListener { _, destination, _ ->
             binding.bottomNav.visibility = when (destination.id) {
-                R.id.loginFragment, R.id.cadastroFragment -> View.GONE
+                R.id.loginFragment, R.id.signupFragment -> View.GONE
                 else -> View.VISIBLE
             }
         }

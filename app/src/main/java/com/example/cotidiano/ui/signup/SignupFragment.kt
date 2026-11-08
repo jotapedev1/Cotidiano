@@ -1,4 +1,4 @@
-package com.example.cotidiano.ui.cadastro
+package com.example.cotidiano.ui.signup
 
 import android.os.Bundle
 import android.view.View
@@ -8,7 +8,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.cotidiano.R
 import com.example.cotidiano.databinding.FragmentSignupBinding
 
-class CadastroFragment : Fragment(R.layout.fragment_signup) {
+class SignupFragment : Fragment(R.layout.fragment_signup) {
 
     private lateinit var binding: FragmentSignupBinding
 
@@ -29,7 +29,7 @@ class CadastroFragment : Fragment(R.layout.fragment_signup) {
                     Toast.makeText(requireContext(), "Senhas não coincidem", Toast.LENGTH_SHORT).show()
                 else -> {
                     Toast.makeText(requireContext(), "Conta criada! Faça login.", Toast.LENGTH_SHORT).show()
-                    findNavController().navigate(R.id.action_cadastro_to_login)
+                    findNavController().navigate(R.id.action_signup_to_login)
                 }
             }
         }

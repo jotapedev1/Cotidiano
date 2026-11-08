@@ -29,7 +29,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         }
 
         binding.btnIrCadastro.setOnClickListener {
-            findNavController().navigate(R.id.action_login_to_cadastro)
+            findNavController().navigate(R.id.action_login_to_signup)
         }
     }
 }
