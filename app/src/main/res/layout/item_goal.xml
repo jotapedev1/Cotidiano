@@ -17,20 +17,29 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/cbMeta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
             <TextView
                 android:id="@+id/tvTitulo"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textStyle="bold"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/tvPorcentagem"
+            <ImageButton
+                android:id="@+id/btnExcluirMeta"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Excluir meta"
+                android:src="@android:drawable/ic_menu_delete" />
         </LinearLayout>
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
@@ -41,18 +50,23 @@
             app:trackCornerRadius="4dp" />
 
         <TextView
-            android:id="@+id/tvPrazo"
+            android:id="@+id/tvProgresso"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:textSize="12sp" />
 
-        <com.google.android.material.slider.Slider
-            android:id="@+id/sliderProgresso"
+        <LinearLayout
+            android:id="@+id/containerSubs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:valueFrom="0"
-            android:valueTo="100"
-            android:stepSize="5" />
+            android:orientation="vertical" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAddSub"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+ Submeta" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

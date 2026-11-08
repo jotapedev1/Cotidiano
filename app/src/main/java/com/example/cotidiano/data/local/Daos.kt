@@ -24,7 +24,7 @@ interface MetaDao {
 
 @Dao
 interface ObrigacaoDao {
-    @Query("SELECT * FROM obrigacoes ORDER BY concluida, prazo")
+    @Query("SELECT * FROM obrigacoes ORDER BY concluida, prazo IS NULL, prazo")
     fun observarTodas(): Flow<List<Obrigacao>>
     @Insert suspend fun inserir(o: Obrigacao): Long
     @Update suspend fun atualizar(o: Obrigacao)
@@ -51,7 +51,7 @@ interface ConfigDao {
     fun observarProgresso(): Flow<Progresso?>
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun salvarProgresso(p: Progresso)
-    @Query("UPDATE progresso SET xpTotal = xpTotal + :xp WHERE id = 1")
+    @Query("UPDATE progresso SET xpTotal = MAX(0, xpTotal + :xp) WHERE id = 1")
     suspend fun adicionarXp(xp: Int)
 }
 
