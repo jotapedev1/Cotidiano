@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/inicioFragment"
+        android:icon="@android:drawable/ic_menu_today"
+        android:title="@string/nav_hoje" />
+    <item android:id="@+id/cronogramaFragment"
+        android:icon="@android:drawable/ic_menu_my_calendar"
+        android:title="@string/nav_cronograma" />
+    <item android:id="@+id/obrigacoesFragment"
+        android:icon="@android:drawable/ic_menu_agenda"
+        android:title="@string/nav_obrigacoes" />
+    <item android:id="@+id/metasFragment"
+        android:icon="@android:drawable/ic_menu_compass"
+        android:title="@string/nav_metas" />
+    <item android:id="@+id/pomodoroFragment"
+        android:icon="@android:drawable/ic_menu_recent_history"
+        android:title="@string/pomodoro" />
+</menu>

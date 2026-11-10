@@ -1,5 +1,70 @@
 <resources>
     <string name="app_name">Cotidiano</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Navegação -->
+    <string name="nav_hoje">Hoje</string>
+    <string name="nav_cronograma">Cronograma</string>
+    <string name="nav_obrigacoes">Obrigações</string>
+    <string name="nav_metas">Metas</string>
+    <string name="pomodoro">Pomodoro</string>
+    <string name="cadastro_rotulo">Cadastro</string>
+
+    <!-- Ações comuns -->
+    <string name="acao_adicionar">Adicionar</string>
+    <string name="acao_cancelar">Cancelar</string>
+    <string name="acao_excluir">Excluir</string>
+    <string name="acao_entrar">Entrar</string>
+    <string name="acao_cadastrar">Cadastrar</string>
+    <string name="acao_ir_cadastro">Não tem conta? Cadastre-se</string>
+    <string name="xp_ganho">+%1$d XP</string>
+
+    <!-- Login e cadastro -->
+    <string name="login_subtitulo">Seu planejador de rotina</string>
+    <string name="cadastro_titulo">Criar conta</string>
+    <string name="cadastro_descricao">Crie sua conta para começar a planejar sua rotina.</string>
+    <string name="campo_nome_completo">Nome completo</string>
+    <string name="campo_email">E-mail</string>
+    <string name="campo_senha">Senha</string>
+    <string name="campo_confirmar_senha">Confirmar senha</string>
+    <string name="msg_preencha_campos">Preencha todos os campos</string>
+    <string name="msg_senhas_diferentes">Senhas não coincidem</string>
+    <string name="msg_conta_criada">Conta criada! Faça login.</string>
+
+    <!-- Hoje -->
+    <string name="tarefas_titulo">Minhas tarefas</string>
+    <string name="tarefas_nova">Nova tarefa</string>
+    <string name="tarefas_dica">Descrição da tarefa</string>
+    <string name="tarefas_contador">%1$d/%2$d concluídas</string>
+
+    <!-- Obrigações -->
+    <string name="obrigacoes_titulo">Minhas obrigações</string>
+    <string name="obrigacoes_vazio">Nenhuma obrigação ainda. Toque em “Nova obrigação”.</string>
+    <string name="obrigacoes_nova">Nova obrigação</string>
+    <string name="obrigacoes_dica_titulo">Título da obrigação</string>
+    <string name="obrigacoes_definir_prazo">Definir prazo (opcional)</string>
+    <string name="prazo_titulo">Prazo</string>
+    <string name="prazo_com_data">Prazo: %1$s</string>
+
+    <!-- Metas -->
+    <string name="metas_titulo">Minhas metas</string>
+    <string name="metas_subtitulo">Acompanhe seu progresso</string>
+    <string name="metas_vazio">Nenhuma meta ainda. Toque em “Nova meta”.</string>
+    <string name="metas_nova">Nova meta</string>
+    <string name="metas_dica_titulo">Título da meta</string>
+    <string name="metas_excluir">Excluir meta</string>
+    <string name="metas_progresso_simples">%1$d%%</string>
+    <string name="metas_progresso_subs">%1$d/%2$d submetas · %3$d%%</string>
+    <string name="submeta_adicionar">+ Submeta</string>
+    <string name="submeta_nova">Nova submeta</string>
+    <string name="submeta_dica">Descrição da submeta</string>
+
+    <!-- Cronograma -->
+    <string name="cronograma_titulo">Cronograma do dia</string>
+    <string name="cronograma_subtitulo">Organize seu dia por blocos de tempo</string>
+
+    <!-- Pomodoro -->
+    <string name="pomodoro_iniciar">Iniciar</string>
+    <string name="pomodoro_pausar">Pausar</string>
+    <string name="pomodoro_continuar">Continuar</string>
+    <string name="pomodoro_resetar">Resetar</string>
 </resources>

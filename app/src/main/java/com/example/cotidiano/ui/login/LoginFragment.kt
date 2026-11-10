@@ -21,15 +21,15 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             val senha = binding.etSenha.text.toString()
 
             if (email.isBlank() || senha.isBlank()) {
-                Toast.makeText(requireContext(), "Preencha todos os campos", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), R.string.msg_preencha_campos, Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            findNavController().navigate(R.id.action_login_to_home)
+            findNavController().navigate(R.id.acao_login_para_inicio)
         }
 
         binding.btnIrCadastro.setOnClickListener {
-            findNavController().navigate(R.id.action_login_to_signup)
+            findNavController().navigate(R.id.acao_login_para_cadastro)
         }
     }
 }

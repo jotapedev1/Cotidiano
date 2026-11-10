@@ -26,14 +26,14 @@ class PomodoroFragment : Fragment(R.layout.fragment_pomodoro) {
             timer?.cancel()
             rodando = false
             restanteMs = 25 * 60 * 1000
-            binding.btnIniciar.text = "Iniciar"
+            binding.btnIniciar.text = getString(R.string.pomodoro_iniciar)
             atualizarTexto()
         }
     }
 
     private fun iniciar() {
         rodando = true
-        binding.btnIniciar.text = "Pausar"
+        binding.btnIniciar.text = getString(R.string.pomodoro_pausar)
         timer = object : CountDownTimer(restanteMs, 1000) {
             override fun onTick(ms: Long) {
                 restanteMs = ms
@@ -41,7 +41,7 @@ class PomodoroFragment : Fragment(R.layout.fragment_pomodoro) {
             }
             override fun onFinish() {
                 rodando = false
-                binding.btnIniciar.text = "Iniciar"
+                binding.btnIniciar.text = getString(R.string.pomodoro_iniciar)
                 restanteMs = 25 * 60 * 1000
                 atualizarTexto()
             }
@@ -51,7 +51,7 @@ class PomodoroFragment : Fragment(R.layout.fragment_pomodoro) {
     private fun pausar() {
         timer?.cancel()
         rodando = false
-        binding.btnIniciar.text = "Continuar"
+        binding.btnIniciar.text = getString(R.string.pomodoro_continuar)
     }
 
     private fun atualizarTexto() {

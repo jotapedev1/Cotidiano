@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Pomodoro"
+        android:text="@string/pomodoro"
         android:textSize="22sp"
         android:textStyle="bold"
         android:layout_marginBottom="24dp" />
@@ -27,12 +27,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="Iniciar" />
+        android:text="@string/pomodoro_iniciar" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnResetar"
         style="@style/Widget.Material3.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Resetar" />
+        android:text="@string/pomodoro_resetar" />
 </LinearLayout>
