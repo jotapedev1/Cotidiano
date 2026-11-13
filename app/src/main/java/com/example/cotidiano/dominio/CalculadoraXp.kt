@@ -1,56 +1,44 @@
 package com.example.cotidiano.dominio
 
+import kotlin.math.pow
+
+/** Quanto XP cada ação vale e como o XP vira nível. */
 object CalculadoraXp {
+    const val XP_TAREFA = 10
     const val XP_SUBMETA = 10
     const val XP_META = 50
     const val XP_OBRIGACAO = 20
     const val XP_POMODORO = 15
 
-    const val XP_TAREFA = 10
-
-    // Função potência (power curve): XP acumulado necessário para atingir o nível L (L >= 1)
-    // Nível 1 começa em 0 XP.
-    fun xpAcumuladoParaNivel(nivel: Int): Int {
-        if (nivel <= 1) return 0
-        // Power curve: 100 * (nivel - 1)^1.5
-        return (100 * Math.pow((nivel - 1).toDouble(), 1.5)).toInt()
-    }
+    // XP total necessário para ALCANÇAR um nível: 100 * (nível - 1)^1,5
+    // Ex.: nível 2 = 100 XP, nível 3 = 282 XP (cada nível custa mais que o anterior).
+    private fun xpParaAlcancar(nivel: Int): Int =
+        if (nivel <= 1) 0 else (100 * (nivel - 1).toDouble().pow(1.5)).toInt()
 
     fun nivel(xpTotal: Int): Int {
-        var l = 1
-        while (xpTotal >= xpAcumuladoParaNivel(l + 1)) {
-            l++
-        }
-        return l
+        var n = 1
+        while (xpTotal >= xpParaAlcancar(n + 1)) n++
+        return n
     }
 
-    fun xpAtualNoNivel(xpTotal: Int): Int {
-        val n = nivel(xpTotal)
-        val xpAtualNivelStart = xpAcumuladoParaNivel(n)
-        return xpTotal - xpAtualNivelStart
-    }
+    /** XP acumulado dentro do nível atual. */
+    fun xpAtualNoNivel(xpTotal: Int): Int = xpTotal - xpParaAlcancar(nivel(xpTotal))
 
+    /** Tamanho do nível atual (quanto falta do início ao fim dele). */
     fun xpNecessarioParaProximoNivel(xpTotal: Int): Int {
         val n = nivel(xpTotal)
-        val xpNextLevel = xpAcumuladoParaNivel(n + 1)
-        val xpCurrentLevel = xpAcumuladoParaNivel(n)
-        return xpNextLevel - xpCurrentLevel
+        return xpParaAlcancar(n + 1) - xpParaAlcancar(n)
     }
 
-    fun progressoNoNivel(xpTotal: Int): Int {
-        val atual = xpAtualNoNivel(xpTotal)
-        val necessario = xpNecessarioParaProximoNivel(xpTotal)
-        if (necessario <= 0) return 100
-        return (atual * 100) / necessario
-    }
+    /** Porcentagem (0 a 100) da barra de XP. */
+    fun progressoNoNivel(xpTotal: Int): Int =
+        xpAtualNoNivel(xpTotal) * 100 / xpNecessarioParaProximoNivel(xpTotal)
 
-    fun xpParaProximoNivel(xpTotal: Int): Int {
-        val atual = xpAtualNoNivel(xpTotal)
-        val necessario = xpNecessarioParaProximoNivel(xpTotal)
-        return necessario - atual
-    }
+    fun xpParaProximoNivel(xpTotal: Int): Int =
+        xpNecessarioParaProximoNivel(xpTotal) - xpAtualNoNivel(xpTotal)
 }
 
+/** Itens que o usuário desbloqueia ao atingir certa quantidade de XP. */
 data class ItemExclusivo(val nome: String, val xpNecessario: Int)
 
 val ITENS_EXCLUSIVOS = listOf(

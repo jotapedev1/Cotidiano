@@ -12,12 +12,17 @@
 
     <!-- Ações comuns -->
     <string name="acao_adicionar">Adicionar</string>
+    <string name="acao_salvar">Salvar</string>
     <string name="acao_cancelar">Cancelar</string>
     <string name="acao_excluir">Excluir</string>
     <string name="acao_entrar">Entrar</string>
     <string name="acao_cadastrar">Cadastrar</string>
     <string name="acao_ir_cadastro">Não tem conta? Cadastre-se</string>
+
+    <!-- XP -->
     <string name="xp_ganho">+%1$d XP</string>
+    <string name="nivel_texto">Nível %1$d</string>
+    <string name="xp_detalhe">%1$d / %2$d XP</string>
 
     <!-- Login e cadastro -->
     <string name="login_subtitulo">Seu planejador de rotina</string>
@@ -30,7 +35,6 @@
     <string name="msg_preencha_campos">Preencha todos os campos</string>
     <string name="msg_senhas_diferentes">Senhas não coincidem</string>
     <string name="msg_conta_criada">Conta criada! Faça login.</string>
-    <string name="tarefas_vazio">Nenhuma tarefa diária ainda. Elas reiniciam todo dia.</string>
     <string name="msg_email_invalido">E-mail inválido</string>
     <string name="msg_senha_curta">A senha deve ter pelo menos 6 caracteres</string>
     <string name="msg_email_em_uso">Este e-mail já está cadastrado</string>
@@ -41,6 +45,7 @@
     <string name="tarefas_nova">Nova tarefa</string>
     <string name="tarefas_dica">Descrição da tarefa</string>
     <string name="tarefas_contador">%1$d/%2$d concluídas</string>
+    <string name="tarefas_vazio">Nenhuma tarefa diária ainda. Elas reiniciam todo dia.</string>
 
     <!-- Obrigações -->
     <string name="obrigacoes_titulo">Minhas obrigações</string>
@@ -66,15 +71,18 @@
 
     <!-- Cronograma -->
     <string name="cronograma_titulo">Cronograma do dia</string>
-    <string name="cronograma_subtitulo">Organize seu dia por blocos de tempo</string>
     <string name="cronograma_adicionar">Novo bloco</string>
     <string name="cronograma_titulo_dialog">Novo bloco de horário</string>
-    <string name="cronograma_msg_excluir">Deseja excluir este bloco?</string>
+    <string name="cronograma_editar">Editar bloco</string>
     <string name="cronograma_dica_titulo">Título da atividade</string>
+    <string name="cronograma_dia">Dia da semana</string>
+    <string name="cronograma_dica_inicio">Início (HH:mm, de 00:00 a 23:59)</string>
+    <string name="cronograma_dica_fim">Fim (HH:mm, até 24:00)</string>
+    <string name="cronograma_cor">Cor</string>
+    <string name="cronograma_erro">Preencha corretamente (início antes do fim, formato HH:mm)</string>
 
     <!-- Pomodoro -->
     <string name="pomodoro_iniciar">Iniciar</string>
     <string name="pomodoro_pausar">Pausar</string>
-    <string name="pomodoro_continuar">Continuar</string>
     <string name="pomodoro_resetar">Resetar</string>
 </resources>

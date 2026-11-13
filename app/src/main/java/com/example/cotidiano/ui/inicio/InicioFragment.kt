@@ -1,42 +1,37 @@
 package com.example.cotidiano.ui.inicio
 
-import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
-import android.widget.ImageButton
-import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cotidiano.R
 import com.example.cotidiano.dados.Repositorio
 import com.example.cotidiano.databinding.FragmentInicioBinding
+import com.example.cotidiano.databinding.ItemTarefaBinding
+import com.example.cotidiano.ui.comum.enquantoVisivel
 import com.example.cotidiano.ui.comum.mostrarXp
 import com.example.cotidiano.ui.comum.pedirTexto
+import com.example.cotidiano.ui.comum.riscar
 import com.example.cotidiano.ui.pomodoro.PomodoroViewModel
 import kotlinx.coroutines.launch
 
 class InicioFragment : Fragment(R.layout.fragment_inicio) {
 
-    private lateinit var binding: FragmentInicioBinding
     private val vm: InicioViewModel by viewModels()
-    private val pomodoroViewModel: PomodoroViewModel by activityViewModels()
+    // Compartilhado com a aba Pomodoro: precisamos zerar o timer ao sair da conta
+    private val pomodoroVm: PomodoroViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding = FragmentInicioBinding.bind(view)
+        val binding = FragmentInicioBinding.bind(view)
 
         val adapter = TarefasAdapter(vm::alternar, vm::excluir)
         binding.rvTarefas.layoutManager = LinearLayoutManager(requireContext())
@@ -46,29 +41,27 @@ class InicioFragment : Fragment(R.layout.fragment_inicio) {
             pedirTexto(R.string.tarefas_nova, R.string.tarefas_dica) { vm.adicionar(it) }
         }
 
+        // Sair: encerra a sessão e volta ao login limpando o histórico de telas
         binding.btnSair.setOnClickListener {
             Repositorio.obter(requireContext()).sair()
-            pomodoroViewModel.resetar()
+            pomodoroVm.resetar()
             findNavController().navigate(
-                R.id.loginFragment,
-                null,
+                R.id.loginFragment, null,
                 NavOptions.Builder().setPopUpTo(R.id.grafo_navegacao, true).build()
             )
         }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    vm.tarefas.collect { lista ->
-                        adapter.submitList(lista)
-                        binding.tvVazio.visibility = if (lista.isEmpty()) View.VISIBLE else View.GONE
-                        binding.tvContador.text = getString(
-                            R.string.tarefas_contador, lista.count { it.concluidaHoje }, lista.size
-                        )
-                    }
+        enquantoVisivel {
+            launch {
+                vm.tarefas.collect { lista ->
+                    adapter.atualizar(lista)
+                    binding.tvVazio.isVisible = lista.isEmpty()
+                    binding.tvContador.text = getString(
+                        R.string.tarefas_contador, lista.count { it.concluidaHoje }, lista.size
+                    )
                 }
-                launch { vm.eventosXp.collect { binding.root.mostrarXp(it) } }
             }
+            launch { vm.eventosXp.collect { binding.root.mostrarXp(it) } }
         }
     }
 
@@ -77,37 +70,37 @@ class InicioFragment : Fragment(R.layout.fragment_inicio) {
         vm.atualizarDia()
     }
 
+    /** Liga a lista de tarefas ao RecyclerView (uma linha por tarefa). */
     class TarefasAdapter(
         private val aoAlternar: (TarefaItem) -> Unit,
         private val aoExcluir: (TarefaItem) -> Unit
-    ) : ListAdapter<TarefaItem, TarefasAdapter.VH>(Comparador) {
+    ) : RecyclerView.Adapter<TarefasAdapter.VH>() {
 
-        class VH(v: View) : RecyclerView.ViewHolder(v) {
-            val cb: CheckBox = v.findViewById(R.id.cbConcluida)
-            val tv: TextView = v.findViewById(R.id.tvTitulo)
-            val btnExcluir: ImageButton = v.findViewById(R.id.btnExcluir)
+        private var lista = emptyList<TarefaItem>()
+
+        fun atualizar(nova: List<TarefaItem>) {
+            lista = nova
+            notifyDataSetChanged()
         }
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = VH(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_tarefa, parent, false)
-        )
+        class VH(val b: ItemTarefaBinding) : RecyclerView.ViewHolder(b.root)
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+            VH(ItemTarefaBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+
+        override fun getItemCount() = lista.size
 
         override fun onBindViewHolder(holder: VH, position: Int) {
-            val item = getItem(position)
-            holder.tv.text = item.tarefa.titulo
-            holder.tv.paintFlags =
-                if (item.concluidaHoje) holder.tv.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-                else holder.tv.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
+            val item = lista[position]
+            val b = holder.b
+            b.tvTitulo.text = item.tarefa.titulo
+            b.tvTitulo.riscar(item.concluidaHoje)
 
-            holder.cb.setOnCheckedChangeListener(null)
-            holder.cb.isChecked = item.concluidaHoje
-            holder.cb.setOnCheckedChangeListener { _, _ -> aoAlternar(item) }
-            holder.btnExcluir.setOnClickListener { aoExcluir(item) }
-        }
-
-        private object Comparador : DiffUtil.ItemCallback<TarefaItem>() {
-            override fun areItemsTheSame(a: TarefaItem, b: TarefaItem) = a.tarefa.id == b.tarefa.id
-            override fun areContentsTheSame(a: TarefaItem, b: TarefaItem) = a == b
+            // Remove o listener antes de mudar o checkbox, senão ele dispararia sozinho
+            b.cbConcluida.setOnCheckedChangeListener(null)
+            b.cbConcluida.isChecked = item.concluidaHoje
+            b.cbConcluida.setOnCheckedChangeListener { _, _ -> aoAlternar(item) }
+            b.btnExcluir.setOnClickListener { aoExcluir(item) }
         }
     }
 }

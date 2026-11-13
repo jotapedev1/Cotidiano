@@ -1,99 +1,64 @@
 package com.example.cotidiano.ui.pomodoro
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cotidiano.dados.Repositorio
-import com.example.cotidiano.dominio.CalculadoraXp
+import com.example.cotidiano.ui.comum.BaseViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class PomodoroViewModel(app: Application) : AndroidViewModel(app) {
+/**
+ * Timer do Pomodoro. Conta em segundos e, ao zerar, registra a sessão e dá XP.
+ * É compartilhado entre telas (activityViewModels), então continua contando ao trocar de aba.
+ */
+class PomodoroViewModel(app: Application) : BaseViewModel(app) {
 
-    private val repo = Repositorio.obter(app)
+    private var minutos = 25
 
-    private var tempoInicialMs = 25 * 60 * 1000L
-
-    private val _restanteMs = MutableStateFlow(tempoInicialMs)
-    val restanteMs: StateFlow<Long> = _restanteMs.asStateFlow()
+    private val _restanteSeg = MutableStateFlow(minutos * 60)
+    val restanteSeg: StateFlow<Int> = _restanteSeg
 
     private val _rodando = MutableStateFlow(false)
-    val rodando: StateFlow<Boolean> = _rodando.asStateFlow()
+    val rodando: StateFlow<Boolean> = _rodando
 
-    private val _eventosXp = MutableSharedFlow<Int>(extraBufferCapacity = 1)
-    val eventosXp = _eventosXp.asSharedFlow()
+    private var timer: Job? = null
 
-    private var timerJob: Job? = null
-
-    fun definirDuracaoMinutos(minutos: Long) {
-        timerJob?.cancel()
-        _rodando.value = false
-        tempoInicialMs = minutos * 60 * 1000L
-        _restanteMs.value = tempoInicialMs
+    /** Troca a duração (25, 15 ou 5 min) e reinicia o timer. */
+    fun definirMinutos(m: Int) {
+        minutos = m
+        resetar()
     }
 
-    fun iniciarOuPausar() {
-        if (_rodando.value) {
-            pausar()
-        } else {
-            iniciar()
-        }
-    }
+    fun iniciarOuPausar() = if (_rodando.value) pausar() else iniciar()
 
-    fun iniciar() {
-        if (_rodando.value || _restanteMs.value <= 0L) return
+    private fun iniciar() {
         _rodando.value = true
-
-        timerJob = viewModelScope.launch {
-            val startTime = System.currentTimeMillis()
-            val startRestante = _restanteMs.value
-            while (_rodando.value && _restanteMs.value > 0L) {
-                val elapsed = System.currentTimeMillis() - startTime
-                val currentRestante = (startRestante - elapsed).coerceAtLeast(0L)
-                _restanteMs.value = currentRestante
-                if (currentRestante <= 0L) {
-                    onFinishTimer()
-                    break
-                }
-                delay(100L)
+        timer = viewModelScope.launch {
+            // A cada segundo desconta 1 até chegar em zero
+            while (_restanteSeg.value > 0) {
+                delay(1000)
+                _restanteSeg.value -= 1
             }
+            concluir()
         }
     }
 
-    fun pausar() {
+    private fun pausar() {
+        timer?.cancel()
         _rodando.value = false
-        timerJob?.cancel()
     }
 
     fun resetar() {
-        timerJob?.cancel()
-        _rodando.value = false
-        _restanteMs.value = tempoInicialMs
+        pausar()
+        _restanteSeg.value = minutos * 60
     }
 
-    private fun onFinishTimer() {
-        timerJob?.cancel()
+    // Terminou: registra a sessão (+XP) e deixa o timer pronto para outra rodada
+    private fun concluir() {
         _rodando.value = false
-        val minutos = (tempoInicialMs / 1000 / 60).toInt()
-        viewModelScope.launch {
-            try {
-                repo.inserirSessaoPomodoro(minutos)
-                _eventosXp.emit(CalculadoraXp.XP_POMODORO)
-            } catch (e: Exception) {
-                // ignore
-            }
-        }
-        _restanteMs.value = tempoInicialMs
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        timerJob?.cancel()
+        _restanteSeg.value = minutos * 60
+        ganharXp { repo.registrarPomodoro(minutos) }
     }
 }

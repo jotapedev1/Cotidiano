@@ -18,26 +18,21 @@ import java.util.Calendar
 class CronogramaViewModel(app: Application) : AndroidViewModel(app) {
     private val repo = Repositorio.obter(app)
 
-    private val _diaSelecionado = MutableStateFlow(Calendar.getInstance().get(Calendar.DAY_OF_WEEK))
-    val diaSelecionado: StateFlow<Int> = _diaSelecionado
+    // Dia exibido (1 = domingo ... 7 = sábado). Começa no dia de hoje.
+    private val _dia = MutableStateFlow(Calendar.getInstance().get(Calendar.DAY_OF_WEEK))
+    val diaSelecionado: StateFlow<Int> = _dia
 
-    val blocos = _diaSelecionado
-        .flatMapLatest { dia -> repo.observarCronogramaDia(dia) }
+    // Ao trocar o dia, a consulta ao banco é refeita automaticamente
+    val blocos = _dia
+        .flatMapLatest { repo.observarBlocos(it) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
-    fun selecionarDia(dia: Int) {
-        _diaSelecionado.value = dia
-    }
+    fun selecionarDia(dia: Int) { _dia.value = dia }
 
-    fun adicionarBloco(titulo: String, diaSemana: Int, inicioMin: Int, fimMin: Int, cor: Int) = viewModelScope.launch {
-        repo.inserirBlocoCronograma(titulo, diaSemana, inicioMin, fimMin, cor)
-    }
+    fun adicionar(titulo: String, dia: Int, inicioMin: Int, fimMin: Int, cor: Int) =
+        viewModelScope.launch { repo.inserirBloco(titulo, dia, inicioMin, fimMin, cor) }
 
-    fun atualizarBloco(bloco: BlocoCronograma) = viewModelScope.launch {
-        repo.atualizarBlocoCronograma(bloco)
-    }
+    fun atualizar(bloco: BlocoCronograma) = viewModelScope.launch { repo.atualizarBloco(bloco) }
 
-    fun excluirBloco(bloco: BlocoCronograma) = viewModelScope.launch {
-        repo.excluirBlocoCronograma(bloco)
-    }
+    fun excluir(bloco: BlocoCronograma) = viewModelScope.launch { repo.excluirBloco(bloco) }
 }

@@ -7,16 +7,19 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 
+// Cada @Entity vira uma tabela. Quase todas têm "usuarioId":
+// é ele que separa os dados de cada conta.
+
 @Entity(tableName = "usuarios", indices = [Index(value = ["email"], unique = true)])
 data class Usuario(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val nome: String,
     val email: String,
     val senhaHash: String,
-    val salt: String
+    val xp: Int = 0 // XP total da conta
 )
 
-/** Tarefa da aba Hoje: repete todo dia. Concluída = ultimaConclusaoDia == hoje. */
+/** Tarefa da aba "Hoje". Está concluída se ultimaConclusaoDia == dia de hoje. */
 @Entity(tableName = "tarefas_diarias", indices = [Index("usuarioId")])
 data class TarefaDiaria(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
@@ -33,6 +36,7 @@ data class Meta(
     val concluida: Boolean = false
 )
 
+// CASCADE: ao excluir a meta, o banco exclui as submetas dela junto.
 @Entity(
     tableName = "submetas",
     foreignKeys = [ForeignKey(
@@ -48,6 +52,7 @@ data class SubMeta(
     val concluida: Boolean = false
 )
 
+/** Não é tabela: só junta uma meta com suas submetas numa consulta. */
 data class MetaComSubMetas(
     @Embedded val meta: Meta,
     @Relation(parentColumn = "id", entityColumn = "metaId")
@@ -63,35 +68,23 @@ data class Obrigacao(
     val concluida: Boolean = false
 )
 
+/** Bloco do cronograma. Horários em minutos desde 00:00 (ex.: 08:30 = 510). */
 @Entity(tableName = "blocos_cronograma", indices = [Index("usuarioId")])
 data class BlocoCronograma(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val usuarioId: Long,
     val titulo: String,
-    val diaSemana: Int,
+    val diaSemana: Int, // 1 = domingo ... 7 = sábado (padrão do Calendar)
     val inicioMin: Int,
     val fimMin: Int,
-    val cor: Int = android.graphics.Color.parseColor("#6750A4")
+    val cor: Int
 )
 
-@Entity(tableName = "config_sono")
-data class ConfigSono(
-    @PrimaryKey val usuarioId: Long,
-    val dormirMin: Int = 22 * 60,
-    val acordarMin: Int = 6 * 60
-)
-
+/** Histórico de pomodoros concluídos. */
 @Entity(tableName = "sessoes_pomodoro", indices = [Index("usuarioId")])
 data class SessaoPomodoro(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val usuarioId: Long,
     val inicio: Long,
-    val minutosFoco: Int,
-    val completa: Boolean
-)
-
-@Entity(tableName = "progresso")
-data class Progresso(
-    @PrimaryKey val usuarioId: Long,
-    val xpTotal: Int = 0
+    val minutosFoco: Int
 )

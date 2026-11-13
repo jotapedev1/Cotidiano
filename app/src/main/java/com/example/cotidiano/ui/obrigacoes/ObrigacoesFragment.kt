@@ -1,93 +1,72 @@
 package com.example.cotidiano.ui.obrigacoes
 
 import android.graphics.Color
-import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cotidiano.R
 import com.example.cotidiano.dados.local.Obrigacao
+import com.example.cotidiano.databinding.DialogObrigacaoBinding
 import com.example.cotidiano.databinding.FragmentObrigacoesBinding
+import com.example.cotidiano.databinding.ItemObrigacaoBinding
+import com.example.cotidiano.ui.comum.enquantoVisivel
 import com.example.cotidiano.ui.comum.formatarData
 import com.example.cotidiano.ui.comum.mostrarXp
-import com.google.android.material.button.MaterialButton
+import com.example.cotidiano.ui.comum.riscar
 import com.google.android.material.datepicker.MaterialDatePicker
 import kotlinx.coroutines.launch
 
 class ObrigacoesFragment : Fragment(R.layout.fragment_obrigacoes) {
 
-    private lateinit var binding: FragmentObrigacoesBinding
     private val vm: ObrigacoesViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding = FragmentObrigacoesBinding.bind(view)
+        val binding = FragmentObrigacoesBinding.bind(view)
 
         val adapter = ObrigacoesAdapter(vm::alternar, vm::excluir)
         binding.rvObrigacoes.layoutManager = LinearLayoutManager(requireContext())
         binding.rvObrigacoes.adapter = adapter
         binding.fabNovaObrigacao.setOnClickListener { mostrarDialogNova() }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    vm.obrigacoes.collect {
-                        adapter.submitList(it)
-                        binding.tvVazio.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
-                    }
+        enquantoVisivel {
+            launch {
+                vm.obrigacoes.collect {
+                    adapter.atualizar(it)
+                    binding.tvVazio.isVisible = it.isEmpty()
                 }
-                launch { vm.eventosXp.collect { binding.root.mostrarXp(it) } }
             }
+            launch { vm.eventosXp.collect { binding.root.mostrarXp(it) } }
         }
     }
 
+    /** Diálogo de nova obrigação: título + prazo opcional (layout em dialog_obrigacao.xml). */
     private fun mostrarDialogNova() {
-        val ctx = requireContext()
+        val d = DialogObrigacaoBinding.inflate(layoutInflater)
         var prazo: Long? = null
 
-        val campo = EditText(ctx).apply { hint = getString(R.string.obrigacoes_dica_titulo); setSingleLine() }
-        val btnPrazo = MaterialButton(
-            ctx, null, com.google.android.material.R.attr.materialButtonOutlinedStyle
-        ).apply { text = getString(R.string.obrigacoes_definir_prazo) }
-
-        btnPrazo.setOnClickListener {
+        d.btnPrazo.setOnClickListener {
             val seletor = MaterialDatePicker.Builder.datePicker().setTitleText(R.string.prazo_titulo).build()
             seletor.addOnPositiveButtonClickListener {
                 prazo = it
-                btnPrazo.text = getString(R.string.prazo_com_data, formatarData(it))
+                d.btnPrazo.text = getString(R.string.prazo_com_data, formatarData(it))
             }
             seletor.show(childFragmentManager, "prazo")
         }
 
-        val caixa = LinearLayout(ctx).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(48, 24, 48, 0)
-            addView(campo)
-            addView(btnPrazo)
-        }
-
-        AlertDialog.Builder(ctx)
+        AlertDialog.Builder(requireContext())
             .setTitle(R.string.obrigacoes_nova)
-            .setView(caixa)
+            .setView(d.root)
             .setPositiveButton(R.string.acao_adicionar) { _, _ ->
-                val txt = campo.text.toString().trim()
-                if (txt.isNotEmpty()) vm.adicionar(txt, prazo)
+                val titulo = d.etTitulo.text.toString().trim()
+                if (titulo.isNotEmpty()) vm.adicionar(titulo, prazo)
             }
             .setNegativeButton(R.string.acao_cancelar, null)
             .show()
@@ -96,46 +75,43 @@ class ObrigacoesFragment : Fragment(R.layout.fragment_obrigacoes) {
     class ObrigacoesAdapter(
         private val aoAlternar: (Obrigacao) -> Unit,
         private val aoExcluir: (Obrigacao) -> Unit
-    ) : ListAdapter<Obrigacao, ObrigacoesAdapter.VH>(Comparador) {
+    ) : RecyclerView.Adapter<ObrigacoesAdapter.VH>() {
 
-        class VH(v: View) : RecyclerView.ViewHolder(v) {
-            val cb: CheckBox = v.findViewById(R.id.cbConcluida)
-            val tvTitulo: TextView = v.findViewById(R.id.tvTitulo)
-            val tvPrazo: TextView = v.findViewById(R.id.tvPrazo)
-            val btnExcluir: ImageButton = v.findViewById(R.id.btnExcluir)
+        private var lista = emptyList<Obrigacao>()
+
+        fun atualizar(nova: List<Obrigacao>) {
+            lista = nova
+            notifyDataSetChanged()
         }
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = VH(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_obrigacao, parent, false)
-        )
+        class VH(val b: ItemObrigacaoBinding) : RecyclerView.ViewHolder(b.root)
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+            VH(ItemObrigacaoBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+
+        override fun getItemCount() = lista.size
 
         override fun onBindViewHolder(holder: VH, position: Int) {
-            val o = getItem(position)
-            holder.tvTitulo.text = o.titulo
-            holder.tvTitulo.paintFlags =
-                if (o.concluida) holder.tvTitulo.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-                else holder.tvTitulo.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
+            val o = lista[position]
+            val b = holder.b
 
-            holder.cb.setOnCheckedChangeListener(null)
-            holder.cb.isChecked = o.concluida
-            holder.cb.setOnCheckedChangeListener { _, _ -> aoAlternar(o) }
+            b.tvTitulo.text = o.titulo
+            b.tvTitulo.riscar(o.concluida)
 
+            b.cbConcluida.setOnCheckedChangeListener(null)
+            b.cbConcluida.isChecked = o.concluida
+            b.cbConcluida.setOnCheckedChangeListener { _, _ -> aoAlternar(o) }
+
+            // Prazo: vermelho se já passou (damos o dia inteiro de tolerância) e ainda não foi feita
             val prazo = o.prazo
-            if (prazo == null) {
-                holder.tvPrazo.visibility = View.GONE
-            } else {
-                holder.tvPrazo.visibility = View.VISIBLE
-                holder.tvPrazo.text =
-                    holder.itemView.context.getString(R.string.prazo_com_data, formatarData(prazo))
+            b.tvPrazo.isVisible = prazo != null
+            if (prazo != null) {
+                b.tvPrazo.text = b.root.context.getString(R.string.prazo_com_data, formatarData(prazo))
                 val atrasada = !o.concluida && prazo + 86_400_000L < System.currentTimeMillis()
-                holder.tvPrazo.setTextColor(if (atrasada) Color.parseColor("#B3261E") else Color.GRAY)
+                b.tvPrazo.setTextColor(if (atrasada) Color.parseColor("#B3261E") else Color.GRAY)
             }
-            holder.btnExcluir.setOnClickListener { aoExcluir(o) }
-        }
 
-        private object Comparador : DiffUtil.ItemCallback<Obrigacao>() {
-            override fun areItemsTheSame(a: Obrigacao, b: Obrigacao) = a.id == b.id
-            override fun areContentsTheSame(a: Obrigacao, b: Obrigacao) = a == b
+            b.btnExcluir.setOnClickListener { aoExcluir(o) }
         }
     }
 }
