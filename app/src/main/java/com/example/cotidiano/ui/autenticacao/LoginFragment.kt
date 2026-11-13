@@ -1,4 +1,4 @@
-package com.example.cotidiano.ui.login
+package com.example.cotidiano.ui.autenticacao
 
 import android.os.Bundle
 import android.view.View

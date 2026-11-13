@@ -1,4 +1,4 @@
-package com.example.cotidiano.ui.cadastro
+package com.example.cotidiano.ui.autenticacao
 
 import android.os.Bundle
 import android.util.Patterns

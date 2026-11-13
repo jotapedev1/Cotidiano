@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.cotidiano.ui.login.LoginFragment"
+        android:name="com.example.cotidiano.ui.autenticacao.LoginFragment"
         android:label="@string/acao_entrar">
         <action
             android:id="@+id/acao_login_para_inicio"
@@ -20,7 +20,7 @@
 
     <fragment
         android:id="@+id/cadastroFragment"
-        android:name="com.example.cotidiano.ui.cadastro.CadastroFragment"
+        android:name="com.example.cotidiano.ui.autenticacao.CadastroFragment"
         android:label="@string/cadastro_rotulo">
         <action
             android:id="@+id/acao_cadastro_para_login"
