@@ -6,7 +6,7 @@ import org.junit.Test
 class CalculadoraXpTest {
 
     @Test
-    fun nivel_comeca_em_1_e_sobe_a_cada_100_xp() {
+    fun nivel_comeca_em_1_e_sobe_com_power_curve() {
         assertEquals(1, CalculadoraXp.nivel(0))
         assertEquals(1, CalculadoraXp.nivel(99))
         assertEquals(2, CalculadoraXp.nivel(100))
@@ -14,8 +14,8 @@ class CalculadoraXpTest {
 
     @Test
     fun progresso_e_xp_restante_no_nivel() {
-        assertEquals(35, CalculadoraXp.progressoNoNivel(235))
-        assertEquals(65, CalculadoraXp.xpParaProximoNivel(235))
+        assertEquals(74, CalculadoraXp.progressoNoNivel(235))
+        assertEquals(47, CalculadoraXp.xpParaProximoNivel(235))
     }
 
     @Test

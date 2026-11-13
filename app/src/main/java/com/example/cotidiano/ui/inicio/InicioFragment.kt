@@ -10,16 +10,20 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cotidiano.R
 import com.example.cotidiano.databinding.FragmentInicioBinding
+import com.example.cotidiano.ui.pomodoro.PomodoroViewModel
 
 data class Tarefa(val id: Int, val titulo: String, var concluida: Boolean = false)
 
 class InicioFragment : Fragment(R.layout.fragment_inicio) {
 
     private lateinit var binding: FragmentInicioBinding
+    private val pomodoroViewModel: PomodoroViewModel by activityViewModels()
     private val tarefas = mutableListOf(
         Tarefa(1, "Estudar Kotlin"),
         Tarefa(2, "Fazer exercícios", true),
@@ -36,6 +40,19 @@ class InicioFragment : Fragment(R.layout.fragment_inicio) {
         atualizarContador()
 
         binding.fabAdicionar.setOnClickListener { mostrarDialogNovaTarefa() }
+
+        binding.btnSair.setOnClickListener {
+            val prefs = requireContext().getSharedPreferences("cotidiano_prefs", android.content.Context.MODE_PRIVATE)
+            prefs.edit().putBoolean("is_logged_in", false).apply()
+            pomodoroViewModel.resetar()
+            findNavController().navigate(
+                R.id.loginFragment,
+                null,
+                androidx.navigation.NavOptions.Builder()
+                    .setPopUpTo(R.id.grafo_navegacao, true)
+                    .build()
+            )
+        }
     }
 
     private fun atualizarContador() {

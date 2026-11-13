@@ -3,9 +3,11 @@ package com.example.cotidiano.dados
 import android.content.Context
 import androidx.room.withTransaction
 import com.example.cotidiano.dados.local.BancoDeDados
+import com.example.cotidiano.dados.local.BlocoCronograma
 import com.example.cotidiano.dados.local.Meta
 import com.example.cotidiano.dados.local.MetaComSubMetas
 import com.example.cotidiano.dados.local.Obrigacao
+import com.example.cotidiano.dados.local.SessaoPomodoro
 import com.example.cotidiano.dados.local.SubMeta
 import com.example.cotidiano.dominio.CalculadoraXp
 import kotlinx.coroutines.flow.Flow
@@ -82,6 +84,27 @@ class Repositorio private constructor(private val db: BancoDeDados) {
         }
         configDao.adicionarXp(delta)
         delta
+    }
+
+    // ---------- Cronograma ----------
+    fun observarCronogramaDia(dia: Int): Flow<List<BlocoCronograma>> = db.cronogramaDao().observarDia(dia)
+
+    suspend fun inserirBlocoCronograma(titulo: String, diaSemana: Int, inicioMin: Int, fimMin: Int, cor: Int) {
+        db.cronogramaDao().inserir(BlocoCronograma(titulo = titulo, diaSemana = diaSemana, inicioMin = inicioMin, fimMin = fimMin, cor = cor))
+    }
+
+    suspend fun atualizarBlocoCronograma(bloco: BlocoCronograma) {
+        db.cronogramaDao().atualizar(bloco)
+    }
+
+    suspend fun excluirBlocoCronograma(bloco: BlocoCronograma) {
+        db.cronogramaDao().excluir(bloco)
+    }
+
+    // ---------- Pomodoro ----------
+    suspend fun inserirSessaoPomodoro(minutos: Int) = db.withTransaction {
+        db.pomodoroDao().inserir(SessaoPomodoro(inicio = System.currentTimeMillis(), minutosFoco = minutos, completa = true))
+        configDao.adicionarXp(CalculadoraXp.XP_POMODORO)
     }
 
     companion object {

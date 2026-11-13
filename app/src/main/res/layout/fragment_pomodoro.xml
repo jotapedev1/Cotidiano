@@ -12,7 +12,39 @@
         android:text="@string/pomodoro"
         android:textSize="22sp"
         android:textStyle="bold"
-        android:layout_marginBottom="24dp" />
+        android:layout_marginBottom="16dp" />
+
+    <!-- Seleção de tempo do Pomodoro -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="24dp"
+        android:gravity="center">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn25m"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="25 min" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn15m"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="15 min" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn5m"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5 min" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tvTimer"

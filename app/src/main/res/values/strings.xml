@@ -8,6 +8,7 @@
     <string name="nav_metas">Metas</string>
     <string name="pomodoro">Pomodoro</string>
     <string name="cadastro_rotulo">Cadastro</string>
+    <string name="nav_sair">Sair</string>
 
     <!-- Ações comuns -->
     <string name="acao_adicionar">Adicionar</string>
@@ -61,6 +62,10 @@
     <!-- Cronograma -->
     <string name="cronograma_titulo">Cronograma do dia</string>
     <string name="cronograma_subtitulo">Organize seu dia por blocos de tempo</string>
+    <string name="cronograma_adicionar">Novo bloco</string>
+    <string name="cronograma_titulo_dialog">Novo bloco de horário</string>
+    <string name="cronograma_msg_excluir">Deseja excluir este bloco?</string>
+    <string name="cronograma_dica_titulo">Título da atividade</string>
 
     <!-- Pomodoro -->
     <string name="pomodoro_iniciar">Iniciar</string>

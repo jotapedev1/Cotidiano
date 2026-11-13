@@ -1,5 +1,6 @@
 package com.example.cotidiano.ui.login
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -16,6 +17,12 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLoginBinding.bind(view)
 
+        val prefs = requireContext().getSharedPreferences("cotidiano_prefs", Context.MODE_PRIVATE)
+        if (prefs.getBoolean("is_logged_in", false)) {
+            findNavController().navigate(R.id.acao_login_para_inicio)
+            return
+        }
+
         binding.btnEntrar.setOnClickListener {
             val email = binding.etEmail.text.toString().trim()
             val senha = binding.etSenha.text.toString()
@@ -25,6 +32,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 return@setOnClickListener
             }
 
+            prefs.edit().putBoolean("is_logged_in", true).apply()
             findNavController().navigate(R.id.acao_login_para_inicio)
         }
 

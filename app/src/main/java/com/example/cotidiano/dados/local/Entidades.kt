@@ -49,7 +49,8 @@ data class BlocoCronograma(
     val titulo: String,
     val diaSemana: Int,
     val inicioMin: Int,
-    val fimMin: Int
+    val fimMin: Int,
+    val cor: Int = android.graphics.Color.parseColor("#6750A4")
 )
 
 @Entity(tableName = "config_sono")

@@ -9,7 +9,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 @Database(
     entities = [Meta::class, SubMeta::class, Obrigacao::class, BlocoCronograma::class,
         ConfigSono::class, SessaoPomodoro::class, Progresso::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class BancoDeDados : RoomDatabase() {

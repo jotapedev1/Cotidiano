@@ -4,7 +4,7 @@
         android:icon="@android:drawable/ic_menu_today"
         android:title="@string/nav_hoje" />
     <item android:id="@+id/cronogramaFragment"
-        android:icon="@android:drawable/ic_menu_my_calendar"
+        android:icon="@android:drawable/ic_menu_day"
         android:title="@string/nav_cronograma" />
     <item android:id="@+id/obrigacoesFragment"
         android:icon="@android:drawable/ic_menu_agenda"
