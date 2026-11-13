@@ -6,6 +6,8 @@ object CalculadoraXp {
     const val XP_OBRIGACAO = 20
     const val XP_POMODORO = 15
 
+    const val XP_TAREFA = 10
+
     // Função potência (power curve): XP acumulado necessário para atingir o nível L (L >= 1)
     // Nível 1 começa em 0 XP.
     fun xpAcumuladoParaNivel(nivel: Int): Int {

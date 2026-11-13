@@ -30,6 +30,11 @@
     <string name="msg_preencha_campos">Preencha todos os campos</string>
     <string name="msg_senhas_diferentes">Senhas não coincidem</string>
     <string name="msg_conta_criada">Conta criada! Faça login.</string>
+    <string name="tarefas_vazio">Nenhuma tarefa diária ainda. Elas reiniciam todo dia.</string>
+    <string name="msg_email_invalido">E-mail inválido</string>
+    <string name="msg_senha_curta">A senha deve ter pelo menos 6 caracteres</string>
+    <string name="msg_email_em_uso">Este e-mail já está cadastrado</string>
+    <string name="msg_credenciais_invalidas">E-mail ou senha incorretos</string>
 
     <!-- Hoje -->
     <string name="tarefas_titulo">Minhas tarefas</string>

@@ -7,9 +7,28 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 
-@Entity(tableName = "metas")
+@Entity(tableName = "usuarios", indices = [Index(value = ["email"], unique = true)])
+data class Usuario(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val nome: String,
+    val email: String,
+    val senhaHash: String,
+    val salt: String
+)
+
+/** Tarefa da aba Hoje: repete todo dia. Concluída = ultimaConclusaoDia == hoje. */
+@Entity(tableName = "tarefas_diarias", indices = [Index("usuarioId")])
+data class TarefaDiaria(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val usuarioId: Long,
+    val titulo: String,
+    val ultimaConclusaoDia: Long? = null
+)
+
+@Entity(tableName = "metas", indices = [Index("usuarioId")])
 data class Meta(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val usuarioId: Long,
     val titulo: String,
     val concluida: Boolean = false
 )
@@ -35,17 +54,19 @@ data class MetaComSubMetas(
     val subMetas: List<SubMeta>
 )
 
-@Entity(tableName = "obrigacoes")
+@Entity(tableName = "obrigacoes", indices = [Index("usuarioId")])
 data class Obrigacao(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val usuarioId: Long,
     val titulo: String,
     val prazo: Long? = null,
     val concluida: Boolean = false
 )
 
-@Entity(tableName = "blocos_cronograma")
+@Entity(tableName = "blocos_cronograma", indices = [Index("usuarioId")])
 data class BlocoCronograma(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val usuarioId: Long,
     val titulo: String,
     val diaSemana: Int,
     val inicioMin: Int,
@@ -55,14 +76,15 @@ data class BlocoCronograma(
 
 @Entity(tableName = "config_sono")
 data class ConfigSono(
-    @PrimaryKey val id: Int = 1,
+    @PrimaryKey val usuarioId: Long,
     val dormirMin: Int = 22 * 60,
     val acordarMin: Int = 6 * 60
 )
 
-@Entity(tableName = "sessoes_pomodoro")
+@Entity(tableName = "sessoes_pomodoro", indices = [Index("usuarioId")])
 data class SessaoPomodoro(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val usuarioId: Long,
     val inicio: Long,
     val minutosFoco: Int,
     val completa: Boolean
@@ -70,6 +92,6 @@ data class SessaoPomodoro(
 
 @Entity(tableName = "progresso")
 data class Progresso(
-    @PrimaryKey val id: Int = 1,
+    @PrimaryKey val usuarioId: Long,
     val xpTotal: Int = 0
 )

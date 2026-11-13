@@ -35,6 +35,13 @@
         android:layout_marginBottom="12dp"
         android:textSize="13sp" />
 
+    <TextView
+        android:id="@+id/tvVazio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tarefas_vazio"
+        android:visibility="gone" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvTarefas"
         android:layout_width="match_parent"

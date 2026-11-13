@@ -35,6 +35,8 @@ class CronogramaFragment : Fragment(R.layout.fragment_cronograma) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentCronogramaBinding.bind(view)
 
+        viewModel.selecionarDia(java.util.Calendar.getInstance().get(java.util.Calendar.DAY_OF_WEEK))
+
         val diasNomes = arrayOf("Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado")
         val spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, diasNomes)
         binding.spinnerDiaFiltro.adapter = spinnerAdapter
@@ -90,13 +92,13 @@ class CronogramaFragment : Fragment(R.layout.fragment_cronograma) {
         }
 
         val etInicio = EditText(context).apply {
-            hint = "Início (HH:mm, ex: 08:00)"
+            hint = "Início (HH:mm, de 00:00 a 23:59)"   // etInicio
             setSingleLine()
             blocoExistente?.let { setText(formatarMinutos(it.inicioMin)) }
         }
 
         val etFim = EditText(context).apply {
-            hint = "Fim (HH:mm, ex: 09:00)"
+            hint = "Fim (HH:mm, até 24:00)"             // etFim
             setSingleLine()
             blocoExistente?.let { setText(formatarMinutos(it.fimMin)) }
         }
@@ -170,8 +172,9 @@ class CronogramaFragment : Fragment(R.layout.fragment_cronograma) {
             .setPositiveButton(positiveText) { _, _ ->
                 val titulo = etTitulo.text.toString().trim()
                 val diaSemana = spinnerDia.selectedItemPosition + 1
-                val inicioMin = parseHorario(etInicio.text.toString().trim())
-                val fimMin = parseHorario(etFim.text.toString().trim())
+                val inicioMin = parseHorario(etInicio.text.toString().trim(), permitir24 = false)
+                val fimMin = parseHorario(etFim.text.toString().trim(), permitir24 = true)
+                    ?.let { if (it == 0) 24 * 60 else it }
 
                 if (titulo.isNotEmpty() && inicioMin != null && fimMin != null && inicioMin < fimMin) {
                     if (blocoExistente == null) {
@@ -200,12 +203,15 @@ class CronogramaFragment : Fragment(R.layout.fragment_cronograma) {
         builder.show()
     }
 
-    private fun parseHorario(s: String): Int? {
-        val parts = s.split(":")
-        if (parts.size != 2) return null
-        val h = parts[0].toIntOrNull() ?: return null
-        val m = parts[1].toIntOrNull() ?: return null
-        if (h !in 0..23 || m !in 0..59) return null
+    // 24:00 só vale como horário de término. 00:00 como término vira meia-noite (24:00).
+    private fun parseHorario(s: String, permitir24: Boolean): Int? {
+        val partes = s.split(":")
+        if (partes.size != 2) return null
+        val h = partes[0].trim().toIntOrNull() ?: return null
+        val m = partes[1].trim().toIntOrNull() ?: return null
+        if (m !in 0..59) return null
+        if (h == 24 && m == 0 && permitir24) return 24 * 60
+        if (h !in 0..23) return null
         return h * 60 + m
     }
 
